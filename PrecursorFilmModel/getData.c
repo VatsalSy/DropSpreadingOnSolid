@@ -9,8 +9,8 @@
 
 char filename[80];
 int nx, ny, len;
-double xmin, ymin, xmax, ymax, Deltax, Deltay, Oho, Ohw, Oha;
-scalar f1[], f2[], D2c[], vel[];
+double xmin, ymin, xmax, ymax, Deltax, Deltay, Oho, OhDrop, Oha;
+scalar f[], D2c[], vel[];
 scalar * list = NULL;
 
 int main(int a, char const *arguments[])
@@ -19,8 +19,8 @@ int main(int a, char const *arguments[])
   xmin = atof(arguments[2]); ymin = atof(arguments[3]);
   xmax = atof(arguments[4]); ymax = atof(arguments[5]);
   ny = atoi(arguments[6]);
-  Oho = atof(arguments[7]); Ohw = atof(arguments[8]);
-  Oha = atof(arguments[9]);
+  OhDrop = atof(arguments[7]);
+  Oha = atof(arguments[8]);
 
   list = list_add (list, D2c);
   list = list_add (list, vel);
@@ -31,9 +31,8 @@ int main(int a, char const *arguments[])
   Actual run and codes!
   */
   restore (file = filename);
-  f1.prolongation = fraction_refine;
-  f2.prolongation = fraction_refine;
-  boundary((scalar *){f1, f2, u.x, u.y});
+  f.prolongation = fraction_refine;
+  boundary((scalar *){f, u.x, u.y});
 
   foreach() {
     double D11 = (u.y[0,1] - u.y[0,-1])/(2*Delta);
@@ -41,7 +40,7 @@ int main(int a, char const *arguments[])
     double D33 = (u.x[1,0] - u.x[-1,0])/(2*Delta);
     double D13 = 0.5*( (u.y[1,0] - u.y[-1,0] + u.x[0,1] - u.x[0,-1])/(2*Delta) );
     double D2 = sq(D11)+sq(D22)+sq(D33)+2.0*sq(D13);
-    D2c[] = 2*(clamp(f1[]*(1-f2[]), 0., 1.) * Oho + clamp(f1[]*f2[], 0., 1.) * Oha + clamp((1-f1[]), 0., 1.) * Ohw)*D2;
+    D2c[] = 2*(clamp(f[], 0., 1.) * OhDrop + clamp(1.-f[], 0., 1.) * Oha)*D2;
 
     if (D2c[] > 0.){
       D2c[] = log(D2c[])/log(10);
