@@ -1,6 +1,6 @@
 # Drop spreading on solid
  Simulate the spreading of a drop on a partially wetting surface.
 
-## Preliminary results
+## New repository
 
-http://bit.ly/43bOIO9
+[comphy-lab/Drop-Spreading-on-Solid](https://github.com/comphy-lab/Drop-Spreading-on-Solid)
